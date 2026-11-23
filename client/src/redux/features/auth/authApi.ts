@@ -8,9 +8,11 @@ type RegistrationResponse = {
 };
 
 type RegistrationData = {
-  name: string;
-  email: string;
-  password: string;
+  companyName: string;
+  adminEmail: string;
+  adminPassword: string;
+  state: string;
+  adminName: string;
 };
 
 type ActivationData = {

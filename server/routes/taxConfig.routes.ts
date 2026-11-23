@@ -11,7 +11,7 @@ const taxConfigRouter = express.Router();
 
 taxConfigRouter.use(isAuthenticated);
 
-taxConfigRouter.get("/active/tax-config", getActiveTaxConfig);
+taxConfigRouter.get("/tax-config/active", getActiveTaxConfig);
 
 taxConfigRouter.post(
   "/create/tax-config",

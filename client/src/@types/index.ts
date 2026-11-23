@@ -212,3 +212,78 @@ export interface ExportFormatOption {
   label: string;
   verified: boolean;
 }
+
+// --- Tax config ---
+
+export interface PayeBand {
+  upTo: number | null;
+  rate: number;
+}
+
+export interface TaxConfig {
+  _id: string;
+  label: string;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  isActive: boolean;
+  payeBands: PayeBand[];
+  rentReliefRate: number;
+  rentReliefCap: number;
+  pensionEmployeeRate: number;
+  pensionEmployerRate: number;
+  nhfRate: number;
+  itfRate: number;
+  nsitfRate: number;
+}
+
+export type TaxConfigFormValues = Omit<TaxConfig, "_id">;
+
+export const EMPTY_TAX_CONFIG_FORM_VALUES: TaxConfigFormValues = {
+  label: "",
+  effectiveFrom: "",
+  effectiveTo: null,
+  isActive: true,
+  payeBands: [
+    { upTo: 800000, rate: 0 },
+    { upTo: null, rate: 0.25 },
+  ],
+  rentReliefRate: 0.2,
+  rentReliefCap: 500000,
+  pensionEmployeeRate: 0.08,
+  pensionEmployerRate: 0.1,
+  nhfRate: 0.025,
+  itfRate: 0.01,
+  nsitfRate: 0.01,
+};
+
+// --- Company ---
+
+export interface Company {
+  _id: string;
+  name: string;
+  rcNumber?: string;
+  industry?: string;
+  address?: string;
+  state?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  itfApplicable: boolean;
+  nsitfApplicable: boolean;
+  isActive: boolean;
+}
+
+export type CompanyFormValues = Omit<Company, "_id" | "isActive">;
+
+export const EMPTY_COMPANY_FORM_VALUES: CompanyFormValues = {
+  name: "",
+  rcNumber: "",
+  industry: "",
+  address: "",
+  state: "",
+  contactEmail: "",
+  contactPhone: "",
+  itfApplicable: false,
+  nsitfApplicable: false,
+};
+
+export type UserRole = "super_admin" | "company_admin" | "hr" | "employee";

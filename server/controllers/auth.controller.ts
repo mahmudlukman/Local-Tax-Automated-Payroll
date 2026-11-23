@@ -60,7 +60,7 @@ export const registerCompany = catchAsyncError(
         email: adminUser.email,
         role: adminUser.role,
       },
-      token: sendToken(adminUser, 200, res)
+      token: sendToken(adminUser, 200, res),
     });
   },
 );
@@ -256,6 +256,16 @@ export const refreshAccessToken = catchAsyncError(
  * @route   GET /api/auth/me
  * @access  Private
  */
-export const getMe = catchAsyncError(async (req: Request, res: Response) => {
-  res.json(req.user);
-});
+export const getMe = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findById(req.user?._id);
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exists", 400));
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  },
+);

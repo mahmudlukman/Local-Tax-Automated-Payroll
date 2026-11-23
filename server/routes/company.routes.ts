@@ -13,7 +13,7 @@ companyRouter.use(isAuthenticated);
 
 companyRouter.get(
   "/companies",
-  authorizeRoles(UserRole.SUPER_ADMIN),
+  authorizeRoles(UserRole.SUPER_ADMIN, UserRole.COMPANY_ADMIN),
   listCompanies,
 );
 companyRouter.get("/company/:id", getCompany);

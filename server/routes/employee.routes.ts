@@ -9,7 +9,6 @@ import {
 import {
   isAuthenticated,
   authorizeRoles,
-  scopeToOwnCompany,
 } from "../middlewares/auth";
 import { UserRole } from "../models/User";
 

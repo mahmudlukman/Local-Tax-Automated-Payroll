@@ -1,122 +1,92 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Toaster } from "react-hot-toast";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+import { useTokenRefresh } from "./utils/userRefreshToken";
+import PrivateRoute from "./components/auth/PrivateRoute";
 
-function App() {
-  const [count, setCount] = useState(0)
+import DashboardPage from "./pages/DashboardPage";
+import EmployeeListPage from "./pages/EmployeeListPage";
+import EmployeeDetailsPage from "./pages/EmployeeDetailsPage";
+import EmployeeFormPage from "./pages/EmployeeFormPage";
+import PayrollRunListPage from "./pages/PayrollRunListPage";
+import PayrollRunDetailsPage from "./pages/PayrollRunDetailsPage";
+import CompanyProfilePage from "./pages/CompanyProfilePage";
+import TaxConfigListPage from "./pages/TaxConfigListPage";
+import MyPayslipsPage from "./pages/MyPayslipsPage";
+import PayslipDetailPage from "./pages/PayslipDetailPage";
+import NotFound from "./pages/NotFound";
+import Login from "./pages/auth/Login";
+import SignUp from "./pages/auth/SingUp";
+import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
+
+const ALL_AUTHENTICATED = [
+  "super_admin",
+  "company_admin",
+  "hr",
+  "employee",
+] as const;
+
+const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
+  { path: "/signup", element: <SignUp /> },
+
+  // Authenticated users (all roles)
+  {
+    element: <PrivateRoute allowedRoles={[...ALL_AUTHENTICATED]} />,
+    children: [
+      { path: "dashboard", element: <DashboardPage /> },
+      { path: "payslips", element: <MyPayslipsPage /> },
+      { path: "payslips/:id", element: <PayslipDetailPage /> },
+      { path: "settings", element: <SettingsPage /> },
+      { path: "profile", element: <ProfilePage /> },
+    ],
+  },
+
+  // HR + admins
+  {
+    element: (
+      <PrivateRoute allowedRoles={["super_admin", "company_admin", "hr"]} />
+    ),
+    children: [
+      { path: "employees", element: <EmployeeListPage /> },
+      { path: "employee/new", element: <EmployeeFormPage /> },
+      { path: "employee/:id", element: <EmployeeDetailsPage /> },
+      { path: "employee/:id/edit", element: <EmployeeFormPage /> },
+      { path: "payroll", element: <PayrollRunListPage /> },
+      { path: "payroll/:id", element: <PayrollRunDetailsPage /> },
+    ],
+  },
+
+  // Company admin only
+  {
+    element: <PrivateRoute allowedRoles={["company_admin"]} />,
+    children: [{ path: "company", element: <CompanyProfilePage /> }],
+  },
+
+  // Super admin only
+  {
+    element: <PrivateRoute allowedRoles={["super_admin"]} />,
+    children: [{ path: "tax-config", element: <TaxConfigListPage /> }],
+  },
+
+  // Fallback: unknown paths → if logged in go to dashboard, else login
+  { path: "/dashboard", element: <Navigate to="/dashboard" replace /> },
+  { path: "*", element: <NotFound /> },
+]);
+
+const App = () => {
+  useTokenRefresh();
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <RouterProvider router={router} />
+      <Toaster toastOptions={{ style: { fontSize: "13px" } }} />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
